@@ -9,7 +9,17 @@ There are 5 fundamental data types:
 - object.get_odd() -> player defensive points data
 
 ### object.get_player()
-Lets explore the results:
+Template:
+   player_id:{
+      "player_id": ,
+      "name": ,
+      "ally_id": ,
+      "num_vill": ,
+      "points":" ,
+      "rank":" ,
+      "datetime": 
+   },
+Results:
 ```json
 {
    "1931":{
