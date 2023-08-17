@@ -1,7 +1,15 @@
 # Tribals-Wars-World-Data-Scrapper
-Tribal Wars world data scrapper rekindled and updated from the tw_bot repository
+Tribal Wars world data scrapper rekindled and updated from the tw_bot repository. The module is built around a single class 'World', 7 methods and 1 property.
 
-Lets explore the data
+There are 5 fundamental data types:
+- object.get_player() -> players json
+- object.get_villages() -> villages data
+- object.get_ally() -> alliances data
+- object.get_oda() -> player offensive points data
+- object.get_odd() -> player defensive points data
+
+### object.get_player()
+Lets explore the results:
 ```json
 {
    "1931":{
