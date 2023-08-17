@@ -10,6 +10,7 @@ There are 5 fundamental data types:
 
 ### object.get_player()
 Template:
+```json
    player_id:{
       "player_id": ,
       "name": ,
@@ -18,7 +19,9 @@ Template:
       "points":" ,
       "rank":" ,
       "datetime": 
-   },
+   }
+```
+
 Results:
 ```json
 {
