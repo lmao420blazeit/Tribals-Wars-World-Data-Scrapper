@@ -53,3 +53,6 @@ Results:
       "datetime":"2023-08-17 18:32:30.799807"
    }
 ```
+
+### object.get_ally()
+Template:
