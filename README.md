@@ -1,6 +1,7 @@
 # Tribals-Wars-World-Data-Scrapper
 Tribal Wars world data scrapper rekindled and updated from the tw_bot repository
 
+```
 {
    "1931":{
       "player_id":"1931",
@@ -705,3 +706,4 @@ Tribal Wars world data scrapper rekindled and updated from the tw_bot repository
       "datetime":"2023-08-17 18:32:30.799807"
    },
    "121319"
+```
