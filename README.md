@@ -15,50 +15,50 @@ There are 5 fundamental data types:
 - object.get_odd() -> player defensive points data
 
 ### object.get_player()
-Template:
+Template output:
 ```json
    player_id:{
-      "player_id": ,
-      "name": ,
-      "ally_id": ,
-      "num_vill": ,
-      "points":" ,
-      "rank":" ,
-      "datetime": 
-   }
-```
-
-Results:
-```json
-{
-   "1931":{
-      "player_id":"1931",
-      "name":"morteiro",
-      "ally_id":"119",
-      "num_vill":"1",
-      "points":"54",
-      "rank":"3716",
-      "datetime":"2023-08-17 18:32:30.798837"
-   },
-   "23042":{
-      "player_id":"23042",
-      "name":"Ukraniano",
-      "ally_id":"157",
-      "num_vill":"1",
-      "points":"2142",
-      "rank":"1068",
-      "datetime":"2023-08-17 18:32:30.798837"
-   },
-   "42012":{
-      "player_id":"42012",
-      "name":"speed7",
-      "ally_id":"0",
-      "num_vill":"1",
-      "points":"4419",
-      "rank":"592",
-      "datetime":"2023-08-17 18:32:30.799807"
+      "player_id": str,
+      "name": str,
+      "ally_id": int,
+      "num_vill": int,
+      "points":" int,
+      "rank":" int,
+      "datetime": datetime
    }
 ```
 
 ### object.get_ally()
 Template:
+```json
+   ally_id:{
+     'ally_id': int,
+     'name': str,
+     'tag': str,
+     'members': int,
+     'num_vill': int,
+     'points': int,
+     'total_points': int,
+     'rank': int
+   }
+```
+
+### object.get_odd()
+Template:
+```json
+   'player_id': {
+     'rank': int,
+     'player_id': int,
+     'points': int
+  }
+```
+
+### object.get_oda()
+Template:
+```json
+   'player_id': {
+     'rank': int,
+     'player_id': int,
+     'points': int
+  },
+```
