@@ -2,7 +2,10 @@
 Tribal Wars world data scrapper rekindled and updated from the old tw_bot repository. The purpose of this simple now standalone module is to create a wrapper around the tribalwars world statistics.
 The module is built around a single class 'World', 7 methods and 1 property. It uses the world "br130", "pt103" as input. It should work for every country.
 
-![alt text](images/classdiagram.png "World class diagram")
+<p align="center">
+  <img src="images/classdiagram.png" <b>World class diagram</b>/>
+</p>
+
 
 There are 5 fundamental data types:
 - object.get_player() -> players json
