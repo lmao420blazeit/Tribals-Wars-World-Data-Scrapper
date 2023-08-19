@@ -3,7 +3,7 @@ Tribal Wars world data scrapper rekindled and updated from the old tw_bot reposi
 The module is built around a single class 'World', 7 methods and 1 property. It uses the world "br130", "pt103" as input. It should work for every country.
 
 <p align="center">
-  <img src="images/classdiagram.png" <b>World class diagram</b>/>
+  <img src="images/classdiagram.png"/> <b>World class diagram</b>
 </p>
 
 
