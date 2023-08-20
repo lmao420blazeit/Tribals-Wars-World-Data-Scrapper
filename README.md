@@ -7,6 +7,11 @@ The module is built around a single class 'World', 7 methods and 1 property. It 
 </p>
 <p align="center"> World class diagram </p>
 
+<p align="center">
+  <img src="images/datamodel.png"/> 
+</p>
+<p align="center"> Data diagram </p>
+
 There are 5 fundamental data types:
 - object.get_player() -> players json
 - object.get_villages() -> villages data
