@@ -2,7 +2,12 @@ import requests
 import xmltodict
 from urllib.parse import unquote
 from datetime import datetime
+from prefect import flow, task
+import logging
 
+LOG_FILENAME = 'debug.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class World:
     """This class contains all available public world data.
@@ -24,17 +29,17 @@ class World:
        :type dict:
     """
 
-    _world = "tribalwars.com.pt"
-
-    def __init__(self, gameworld: str):
-        self.building_config = f"https://{gameworld}.{World._world}/interface.php?func=get_building_info"
-        self.gameworld_config = f"https://{gameworld}.{World._world}/interface.php?func=get_config"
-        self.unit_config = f"https://{gameworld}.{World._world}/interface.php?func=get_unit_info"
-        self.player_data = f"https://{gameworld}.{World._world}/map/player.txt"
-        self.ally_data = f"https://{gameworld}.{World._world}/map/ally.txt"
-        self.kill_def = f"https://{gameworld}.{World._world}/map/kill_def.txt"
-        self.kill_att = f"https://{gameworld}.{World._world}/map/kill_att.txt"
-        self.village_data = f"https://{gameworld}.{World._world}/map/village.txt"
+    def __init__(self, gameworld: str, server: str):
+        self.gameworld = gameworld
+        self.server = server
+        self.building_config = f"{server}/interface.php?func=get_building_info"
+        self.gameworld_config = f"{server}/interface.php?func=get_config"
+        self.unit_config = f"{server}/interface.php?func=get_unit_info"
+        self.player_data = f"{server}/map/player.txt"
+        self.ally_data = f"{server}/map/ally.txt"
+        self.kill_def = f"{server}/map/kill_def.txt"
+        self.kill_att = f"{server}/map/kill_att.txt"
+        self.village_data = f"{server}/map/village.txt"
 
     @property
     def worldspeed(self) -> int:   
@@ -80,6 +85,8 @@ class World:
         }
         """
 
+        @task(name="{}:Fetch Village Data".format(self.gameworld),
+            description="Pull village data from endpoint.")
         def parser(data:str):
             info = {}
             for row in data.splitlines():
@@ -92,11 +99,14 @@ class World:
                                 "continent": _info[3][:1]+_info[2][:1],
                                 "player_id": _info[4],
                                 "points": _info[5],
-                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))}})
+                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))},
+                                "server": self.gameworld})
             return(info)
 
         data = unquote(requests.get(self.village_data).text).replace("+", " ")
+        logger.info(f"{self.gameworld}:Village -> Dumping data")
         return parser(data)
+
 
     def get_player(self):
         """:returns:
@@ -110,6 +120,8 @@ class World:
           },
         """
 
+        @task(name="{}:Fetch Player Data".format(self.gameworld),
+            description="Pull player data from endpoint.")
         def parser(data:str):
             info = {}
             for row in data.splitlines():
@@ -121,12 +133,14 @@ class World:
                                 "num_vill": _info[3],
                                 "points": _info[4],
                                 "rank": _info[5],
-                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))}})
+                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))},
+                                "server": self.gameworld})
 
             return(info)
 
 
         data = unquote(requests.get(self.player_data).text).replace("+", " ")
+        logger.info(f"{self.gameworld}:Player -> Dumping data")
         return parser(data)
 
     def get_ally(self):
@@ -143,6 +157,8 @@ class World:
           },
         """
 
+        @task(name="{}:Fetch Ally Data".format(self.gameworld),
+            description="Pull ally data from endpoint.")
         def parser(data:str):
             info = {}
             for row in data.splitlines():
@@ -156,12 +172,13 @@ class World:
                                 "points": _info[5],
                                 "total_points": _info[6],
                                 "rank": _info[7],
-                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))}})
+                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))},
+                                "server": self.gameworld})
 
             return(info)
 
-
         data = unquote(requests.get(self.ally_data).text).replace("+", " ")
+        logger.info(f"{self.gameworld}:Ally -> Dumping data")
         return parser(data)
 
     def get_odd(self):
@@ -173,6 +190,8 @@ class World:
           },
         """
 
+        @task(name="{}:Fetch ODD Data".format(self.gameworld),
+            description="Pull ODD data from endpoint.")
         def parser(data:str):
             info = {}
             for row in data.splitlines():
@@ -181,11 +200,13 @@ class World:
                                 {"rank": _info[0],
                                 "player_id": _info[1],
                                 "points": _info[2],
-                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))}})
+                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))},
+                                "server": self.gameworld})
 
             return(info)
 
         data = unquote(requests.get(self.kill_def).text).replace("+", " ")
+        logger.info(f"{self.gameworld}:Defense -> Dumping data")
         return parser(data)
 
     def get_oda(self):
@@ -197,6 +218,8 @@ class World:
           },
         """
 
+        @task(name="{}:Fetch ODD Data".format(self.gameworld),
+            description="Pull ODA data from endpoint.")
         def parser(data:str):
             info = {}
             for row in data.splitlines():
@@ -205,10 +228,11 @@ class World:
                                 {"rank": _info[0],
                                 "player_id": _info[1],
                                 "points": _info[2],
-                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))}})
+                                "datetime": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))},
+                                "server": self.gameworld})
 
             return(info)
 
         data = unquote(requests.get(self.kill_att).text).replace("+", " ")
-        print(data)
+        logger.info(f"{self.gameworld}:Attack -> Dumping data")
         return parser(data)
