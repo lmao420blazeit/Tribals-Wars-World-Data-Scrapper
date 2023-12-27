@@ -3,24 +3,16 @@ from prefect import task, flow
 import os
 import json
 from datetime import datetime
+from postgres_handle import postgres_village_data
+import psycopg2
+from psycopg2 import sql
 
-def fetch_prototype(worlds, filename, flowname):
-    @flow(name=flowname)
-    def flow(worlds, filename):
-        for obj in worlds:
-            data = json.dumps(obj.get_player())
-            #data = json.loads(data)
 
-            if not os.path.exists(filename):
-                os.makedirs(filename)
-
-            json_path = '{}/{}-{}.json'.format(filename, filename, getattr(obj, "gameworld"))
-            with open(json_path, 'w') as f:
-                json.dump(data, f)
-        return
-
-    flow(worlds, filename)
-    return    
+dbname = "tribalwars"
+user = "user"
+password = "4202"
+host = "localhost"
+port = "5432"
 
 @flow(name="Get player data")
 def fetch_player_data(worlds):
@@ -95,7 +87,7 @@ def fetch_attack_data(worlds):
     return
 
 @flow(name="Get village data")
-def fetch_village_data(worlds):
+def fetch_village_data(worlds, cur):
     for obj in worlds:
         data = json.dumps(obj.get_village())
         #data = json.loads(data)
@@ -107,6 +99,7 @@ def fetch_village_data(worlds):
             os.makedirs("village-data/{}".format(str(datetime.now().strftime("%Y-%m-%d"))))
 
         json_path = 'village-data/{}/{}.json'.format(str(datetime.now().strftime("%Y-%m-%d")), getattr(obj, "gameworld"))
+        postgres_village_data(data, cur)
         with open(json_path, 'w') as f:
             json.dump(data, f)
 
@@ -114,6 +107,11 @@ def fetch_village_data(worlds):
 
 @flow(name="Get data for all endpoints")
 def main_flow() -> None:
+
+    # Connect to the PostgreSQL database
+    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    cur = conn.cursor()
+
     tribalwars_server_list = ["tribalwars.com.pt",
                               "die-staemme.de",
                               "guerretribale.fr",
@@ -122,11 +120,14 @@ def main_flow() -> None:
 
     for server in tribalwars_server_list:
         obj_list = Server(server).generate_worlds()
-        fetch_player_data(obj_list)
-        fetch_ally_data(obj_list)
-        fetch_defense_data(obj_list)
-        fetch_attack_data(obj_list)
-        fetch_village_data(obj_list)
+        #fetch_player_data(obj_list)
+        #fetch_ally_data(obj_list)
+        #fetch_defense_data(obj_list)
+        #fetch_attack_data(obj_list)
+        fetch_village_data(obj_list, cur)
+
+    conn.commit()
+    conn.close()
 
     return
 
